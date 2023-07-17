@@ -1,0 +1,3 @@
+source ~/.config/paths
+source ~/.config/alias
+source ~/.config/zsh-autosuggestions/zsh-autosuggestions.zsh
