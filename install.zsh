@@ -15,10 +15,10 @@ brew install git
 
 # configure git
 # add git aliases
-cat << EOF >>| ~/.gitconfig
+cat << EOF > ~/.gitconfig
 [user]
-	name = $1
-	email = $2
+	name = ime	
+	email = imepriimek@gmail.com
 [init]
 	defaultBranch = main
 [core]
@@ -39,7 +39,7 @@ cat << EOF >>| ~/.gitconfig
 EOF
 
 # write to .zlogin
-cat <<EOF >>| ~/.zlogin
+cat <<EOF > ~/.zlogin
 #~/.zlogin
 
 {
@@ -55,7 +55,7 @@ cat <<EOF >>| ~/.zlogin
 EOF
 
 # configure the ~/.zshrc
-cat <<EOF >>| ~/.zshrc
+cat <<EOF > ~/.zshrc
 # ~/.zshrc
 
 source ~/.config/sources
@@ -98,7 +98,8 @@ defaults write com.apple.dock "autohide-delay" -float "0" &&
 defaults write com.apple.finder "ShowPathbar" -bool "true" &&
 defaults write com.apple.finder "FXRemoveOldTrashItems" -bool "true" &&
 defaults write com.apple.finder CreateDesktop false &&
-defaults write NSGlobalDomain "NSToolbarTitleViewRolloverDelay" -float "0"
+defaults write NSGlobalDomain "NSToolbarTitleViewRolloverDelay" -float "0" &&
+defaults write com.apple.dock largesize -int "40"
 
 # make changes take effect
 killall Dock
@@ -115,12 +116,20 @@ brew install inso
 brew install tree
 brew install exa
 brew install python
-sudo easy_install pip
-brew install speed-cli
+brew install speedtest-cli
 brew install tmux
 
-# enacle the code . command for VS code
-cat << EOF >>| ~/.zprofile
+# enable the code . command for VS code
+cat << EOF >> ~/.zprofile
 # Add Visual Studio Code (code)
 export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 EOF
+
+# Check the exit status
+if [ $? -eq 0 ]; then
+  echo "Script executed successfully"
+  
+  # Delete the script file
+  rm -- "\$0"
+else
+  echo "An error occurred during script execution"
