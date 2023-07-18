@@ -6,11 +6,24 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 #java
-export JAVA_HOME=$(/usr/libexec/java_home)
-
+if command -v java >/dev/null 2>&1; then
+    # Set JAVA_HOME environment variable
+    # Java is installed set the path
+    export JAVA_HOME=$(/usr/libexec/java_home)
+else
+    # java not found skipp setting the path
+    echo "Java is not installed. Skipping command."
+fi
 
 #MPJ express && openmpi
+
+export MPJ_HOME=/path/to/mpj/ 2>/dev/null
+
+if [ $? -eq 0 ]; then
+    export LD_LIBRARY_PATH=$HOME/opt/usr/local/lib:$LD_LIBRARY_PATH
+else
+    echo "Error setting MPJ_HOME. Please check the path."
+fi
 export MPJ_HOME=/Users/urbannovak/.mpj
-export LD_LIBRARY_PATH=$HOME/opt/usr/local/lib:$LD_LIBRARY_PATH
 
 export LANG=en_US.UTF-8

@@ -1,8 +1,14 @@
+# getting git credentials
+echo "Git credentials"
+read -p "username: " username
+read -p "email: " email
+
 # installing brew
+#NONINTERACTIVE=1
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
 # add path to brew
-echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' > ~/.zprofile
 
 # activate brew
 source ~/.zprofile
@@ -13,30 +19,31 @@ brew update
 # install git
 brew install git
 
-# configure git
-# add git aliases
-cat << EOF > ~/.gitconfig
-[user]
-	name = ime	
-	email = imepriimek@gmail.com
-[init]
-	defaultBranch = main
-[core]
-	editor = code --wait
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
+# apps
+brew install --cask google-chrome
+brew install --cask intellij-idea
+brew install --cask rectangle
+brew install --cask appcleaner
+brew install --cask visual-studio-code
 
-[alias]
-    a = add
-    alias = "!git config --get-regexp '^alias\\.' | awk -F '[ =]' '!/alias[[:space:]]/ { gsub(/--format=.*/, \"\"); gsub(/--pretty=.*/, \"\"); print substr($0, index($0,$2)) }'"
-    br = branch --list --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
-    c = commit
-    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
-    s = status -s
-EOF
+# CLI apps
+brew install docker 
+brew install inso
+brew install tree
+brew install exa
+brew install python
+brew install speedtest-cli
+brew install tmux
+
+# configure git
+# check that we have non empty credentials
+# Check if any value is empty
+if [[ -z "$username" || -z "$email" ]]; 
+  then
+    echo "Failed with wrong giot credentials"
+  else
+    gitconfig
+fi
 
 # write to .zlogin
 cat <<EOF > ~/.zlogin
@@ -53,6 +60,9 @@ cat <<EOF > ~/.zlogin
   fi
 } &!
 EOF
+
+# installing nvm
+git clone https://github.com/nvm-sh/nvm.git ~/.nvm
 
 # configure the ~/.zshrc
 cat <<EOF > ~/.zshrc
@@ -71,7 +81,7 @@ eval "$(starship init zsh)"
 EOF
 
 # check that shell is valid
-cat <<EOF >>| ~/.zshenv
+cat <<EOF > ~/.zshenv
 # ~/.zshenv
 
 # Ensure that a non-login, non-interactive shell has a defined environment.
@@ -83,11 +93,6 @@ EOF
 # update shell
 source ~/.zshrc
 
-# installing nvm
-git clone https://github.com/nvm-sh/nvm.git ~/.nvm
-
-source ~/.zshrc
-
 nvm install node
 
 # apple defaults configuration
@@ -95,6 +100,7 @@ defaults write com.apple.dock "tilesize" -int "28" &&
 defaults write com.apple.dock "autohide" -bool "true" && 
 defaults write com.apple.dock "autohide-time-modifier" -float "0" &&
 defaults write com.apple.dock "autohide-delay" -float "0" &&
+defaults write com.apple.dock static-only -bool true; &&
 defaults write com.apple.finder "ShowPathbar" -bool "true" &&
 defaults write com.apple.finder "FXRemoveOldTrashItems" -bool "true" &&
 defaults write com.apple.finder CreateDesktop false &&
@@ -105,31 +111,47 @@ defaults write com.apple.dock largesize -int "40"
 killall Dock
 killall Finder
 
-# installing diffrent apps with brew
-brew install --cask google-chrome
-brew install docker 
-brew install --cask intellij-idea
-brew install --cask rectangle
-brew install --cask appcleaner
-brew install --cask visual-studio-code
-brew install inso
-brew install tree
-brew install exa
-brew install python
-brew install speedtest-cli
-brew install tmux
-
 # enable the code . command for VS code
 cat << EOF >> ~/.zprofile
 # Add Visual Studio Code (code)
 export PATH="\$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 EOF
 
-# Check the exit status
-if [ $? -eq 0 ]; then
-  echo "Script executed successfully"
+# delete the script if sucessfoul
+
+# # Check the exit status
+# if [ $? -eq 0 ]; then
+#   echo "Script executed successfully"
   
-  # Delete the script file
-  rm -- "\$0"
-else
-  echo "An error occurred during script execution"
+#   # Delete the script file
+#   rm -- "\$0"
+# else
+#   echo "An error occurred during script execution"
+
+# -------------------- functions --------------------
+
+gitconfig() {
+  # add git aliases
+cat << EOF > ~/.gitconfig
+[user]
+	name = $username	
+	email = $email
+[init]
+	defaultBranch = main
+[core]
+	editor = code --wait
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[alias]
+    a = add
+    alias = "!git config --get-regexp '^alias\\.' | awk -F '[ =]' '!/alias[[:space:]]/ { gsub(/--format=.*/, \"\"); gsub(/--pretty=.*/, \"\"); print substr($0, index($0,$2)) }'"
+    br = branch --list --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+    c = commit
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    s = status -s
+EOF
+}
